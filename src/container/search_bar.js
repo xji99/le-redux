@@ -1,6 +1,10 @@
 import React, {Component} from 'react';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+import {fetchWeather} from '../actions/index';
 
-export default class SearchBar extends Component {
+
+class SearchBar extends Component {
     constructor(props){
         super(props);
 
@@ -19,8 +23,14 @@ export default class SearchBar extends Component {
 
     onFormSubmit = (event)=>{
         event.preventDefault();
+
+        //the important glue point, action creator is avaliable in props!
+        this.props.fetchWeather(this.state.term);
+        
+        //reset
+        this.setState({term:''});
     }
-    
+
     render(){
         return (
             <form className="input-group" onSubmit={this.onFormSubmit}>
@@ -39,3 +49,11 @@ export default class SearchBar extends Component {
     }
 
 }
+
+function mapDispatchToProps(dispatch){
+    //enable the action dispatched to redux, thus reducer get called.
+    //with bindActionCreators call, the featchWeather is bind to this component's property, so you can call this.props.fetchWeather!
+    return bindActionCreators({fetchWeather}, dispatch);
+}
+
+export default connect(null, mapDispatchToProps)(SearchBar);
